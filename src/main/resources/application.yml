@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  use-forward-headers: true
+
+security:
+  oauth2:
+    client:
+      clientId: <FILL IT>
+      clientSecret: <FILL IT>
+      accessTokenUri: https://api.fitbit.com/oauth2/token
+      userAuthorizationUri: https://www.fitbit.com/oauth2/authorize
+      tokenName: oauth_token
+      authenticationScheme: header
+      clientAuthenticationScheme: header
+      scope: "activity profile"
+    resource:
+      userInfoUri: https://api.fitbit.com/1/user/-/profile.json
+fitbit:
+  api:
+    resource:
+      activitiesUri: https://api.fitbit.com/1/user/-/activities.json
+      actvitiesStepsLastWeekBaseDateUri: https://api.fitbit.com/1/user/-/activities/steps/date/%s/1w.json
+  scheduler:
+      cron: "0 */10 * ? * *"
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.springframework.web.client.RestTemplate: INFO
+    com.soprasteria.fitbit: DEBUG
+    org.hibernate.SQL: DEBUG
+
+spring:
+  resources:
+    cache:
+      period: 31536000
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    platform: postgresql
+    url: jdbc:postgresql://localhost:5432/docker
+    username: docker
+    password: docker
+  jpa:
+    properties:
+      hibernate:
+        jdbc.lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
