@@ -189,10 +189,57 @@ public class UserServiceImpl implements UserService {
                         logger.debug("RANKING - set =");
                         userCurrentWeek.setTrend("=");
                     }
+                    break;
                 }
             }
         }
 
         return rankingCurrentWeek;
+    }
+
+    @Override
+    public List<Departament> getRankingByDepartament() {
+
+        List<Departament> currentRankingByDepartament = em
+                .createQuery("select new com.soprasteria.fitbit.model.Departament(u.departament, sum(u.currentSteps)) " +
+                        "from User u " +
+                        "group by u.departament " +
+                        "order by sum(u.currentSteps) desc", Departament.class)
+                .getResultList();
+
+        List<Departament> previousRankingByDepartament = em
+                .createQuery("select new com.soprasteria.fitbit.model.Departament(u.departament, sum(u.previusSteps)) " +
+                        "from User u " +
+                        "group by u.departament " +
+                        "order by sum(u.previusSteps) desc", Departament.class)
+                .getResultList();
+
+        int currentPos = 0;
+        Iterator<Departament> itCurrentRanking = currentRankingByDepartament.iterator();
+        while (itCurrentRanking.hasNext()) {
+            currentPos++;
+            Departament depCurrentRanking = itCurrentRanking.next();
+            depCurrentRanking.setPosition(currentPos);
+            Iterator<Departament> itPreviousRanking = previousRankingByDepartament.iterator();
+            int previousPos = 0;
+            while(itPreviousRanking.hasNext()) {
+                previousPos++;
+                Departament depPreviousRanking = itPreviousRanking.next();
+                if (depCurrentRanking.getName() != null && depCurrentRanking.getName().equals(depPreviousRanking.getName())) {
+                    depCurrentRanking.setPreviusSteps(depPreviousRanking.getCurrentSteps());
+                    if (depCurrentRanking.getPosition() < previousPos) {
+                        depCurrentRanking.setTrend(">");
+                    } else if (depCurrentRanking.getPosition() > previousPos) {
+                        depCurrentRanking.setTrend("<");
+                    } else {
+                        depCurrentRanking.setTrend("=");
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        return currentRankingByDepartament;
     }
 }

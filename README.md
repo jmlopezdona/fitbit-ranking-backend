@@ -111,7 +111,7 @@ Package application in the target folder:
 
 JAR file generated can be execute with:
 
-``java -jar fitbit-0.0.1-SNAPSHOT.jar``
+``java -jar fitbit-ranking-0.0.1-SNAPSHOT.jar``
 
 ## References
 

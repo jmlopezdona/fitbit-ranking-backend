@@ -1,6 +1,7 @@
 package com.soprasteria.fitbit.service;
 
 import com.soprasteria.fitbit.model.ActivitySteps;
+import com.soprasteria.fitbit.model.Departament;
 import com.soprasteria.fitbit.model.LifetimeActivity;
 import com.soprasteria.fitbit.model.User;
 import org.springframework.data.domain.Page;
@@ -28,5 +29,7 @@ public interface UserService {
     List<User> getRankingWeek(String ranking) throws Exception;
 
     List<User> getRanking() throws Exception;
+
+    List<Departament> getRankingByDepartament();
 
 }

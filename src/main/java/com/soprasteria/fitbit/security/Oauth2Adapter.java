@@ -70,7 +70,7 @@ public class Oauth2Adapter extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
             .antMatcher("/**").authorizeRequests()
-            .antMatchers("/", "/login**", "/api/ranking", "/webjars/**", "/static/**").permitAll()
+            .antMatchers("/", "/login**", "/api/user/ranking", "/api/departament/ranking",  "/webjars/**", "/static/**").permitAll()
             .anyRequest().authenticated()
             .and().addFilterBefore(oauth2SsoFilter(), BasicAuthenticationFilter.class);
         http.csrf().disable();
