@@ -113,6 +113,25 @@ JAR file generated can be execute with:
 
 ``java -jar fitbit-ranking-0.0.1-SNAPSHOT.jar``
 
+## Docker
+
+If you want to use Docker containers:
+
+1. Build frontend docker image (fron 'fitbit-ranking-webapp' project):
+
+``docker build -t fitbit-ranking-webapp . ``
+
+2. Build bakcend docker image (from this project):
+
+`docker build -t fitbit-ranking-backend .``
+
+3. Up frontend, backend and database:
+
+``docker-compose up``
+
+4. Access to the aplication from ``http://localhost:3000``
+
+
 ## References
 
 - [Fitbit Web API Reference](https://dev.fitbit.com/build/reference/web-api/)
