@@ -123,7 +123,7 @@ If you want to use Docker containers:
 
 2. Build bakcend docker image (from this project):
 
-`docker build -t fitbit-ranking-backend .``
+``docker build -t fitbit-ranking-backend .``
 
 3. Up frontend, backend and database:
 
