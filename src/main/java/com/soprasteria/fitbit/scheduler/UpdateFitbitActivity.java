@@ -3,7 +3,9 @@ package com.soprasteria.fitbit.scheduler;
 import com.soprasteria.fitbit.model.ActivitySteps;
 import com.soprasteria.fitbit.model.ActivityStepsDetail;
 import com.soprasteria.fitbit.model.User;
+import com.soprasteria.fitbit.model.UserSteps;
 import com.soprasteria.fitbit.service.UserService;
+import com.soprasteria.fitbit.service.UserStepsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Iterator;
+import java.util.List;
 
 
 @Component
@@ -30,6 +33,9 @@ public class UpdateFitbitActivity {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserStepsService userStepsService;
+
     private long sumSteps(ActivitySteps activitySteps) {
         long currentSteps = 0;
         Iterator<ActivityStepsDetail> list = activitySteps.getActivitySteps().iterator();
@@ -38,6 +44,11 @@ public class UpdateFitbitActivity {
             currentSteps += detail.getSteps();
         }
         return currentSteps;
+    }
+
+    private long todaySteps(ActivitySteps activitySteps) {
+        List<ActivityStepsDetail> activityStepsDetail = activitySteps.getActivitySteps();
+        return activityStepsDetail.get(LocalDate.now().getDayOfWeek().getValue()-1).getSteps();
     }
 
 
@@ -64,11 +75,21 @@ public class UpdateFitbitActivity {
 
                 long previousSteps = sumSteps(activitiesStepsPreviousWeek);
                 long currentSteps = sumSteps(activitiesStepsCurrentWeek);
+                long todaySteps = todaySteps(activitiesStepsCurrentWeek);
 
                 user.setPreviusSteps(previousSteps);
                 user.setCurrentSteps(currentSteps);
 
                 userService.save(user);
+
+                UserSteps userSteps = new UserSteps();
+
+                userSteps.setUser(user);
+                userSteps.setPreviosRankingSteps(previousSteps);
+                userSteps.setCurrentRankingSteps(currentSteps);
+                userSteps.setTodaySteps(todaySteps);
+
+                userStepsService.save(userSteps);
 
                 logger.debug("Update Fitbiy Activities :: Saved :: User - {}", user.getUserId());
             } catch (Exception e) {
@@ -77,6 +98,5 @@ public class UpdateFitbitActivity {
         }
 
     }
-
 
 }
