@@ -21,7 +21,7 @@ fitbit:
       activitiesUri: https://api.fitbit.com/1/user/-/activities.json
       actvitiesStepsLastWeekBaseDateUri: https://api.fitbit.com/1/user/-/activities/steps/date/%s/1w.json
   scheduler:
-      cron: "0 */10 * ? * *"
+      cron: "0 0 * ? * *"
 
 logging:
   level:
@@ -45,4 +45,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-
