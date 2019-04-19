@@ -101,24 +101,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LifetimeActivity getFitbitLifetime(String userId) {
-
-        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
-        RestTemplate restTemplate = new RestTemplate(factory);
-        restTemplate.setInterceptors(Collections.singletonList(new RequestResponseLoggingInterceptor()));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Bearer " + getAccessToken(userId));
-
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<Activity> response = restTemplate.exchange(fitbitActivitiesUri, HttpMethod.GET, entity, Activity.class);
-
-        return response.getBody().getLifetime().getTotal();
-    }
-
-    @Override
     public ActivitySteps getActivitiesStepsWeekBaseDate(String userId, String date) {
 
         ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory());
@@ -138,8 +120,7 @@ public class UserServiceImpl implements UserService {
         return response.getBody();
     }
 
-    @Override
-    public List<User> getRankingWeek(String ranking) throws Exception {
+    private List<User> getRankingWeek(String ranking, String departament) throws Exception {
         PageRequest request;
 
         if (ranking.equals(UserServiceImpl.PREVIOUS_WEEK)) {
@@ -151,7 +132,7 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Ranking unknown");
         }
 
-        Page<User> users = findAll(request);
+        Page<User> users = repository.findByDepartament(departament, request);
         Iterator<User> itUsers= users.getContent().iterator();
 
         int position = 1;
@@ -165,9 +146,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getRanking() throws Exception {
-        List<User> rankingPreviousWeek = getRankingWeek(UserService.PREVIOUS_WEEK);
-        List<User> rankingCurrentWeek = getRankingWeek(UserService.CURRENT_WEEK);
+    public List<User> getRankingByUserInDepartament(String departament) throws Exception {
+        List<User> rankingPreviousWeek = getRankingWeek(UserService.PREVIOUS_WEEK, departament);
+        List<User> rankingCurrentWeek = getRankingWeek(UserService.CURRENT_WEEK, departament);
 
         Iterator<User> itRankingCurrentWeek = rankingCurrentWeek.iterator();
         while (itRankingCurrentWeek.hasNext()) {
@@ -242,4 +223,5 @@ public class UserServiceImpl implements UserService {
 
         return currentRankingByDepartament;
     }
+
 }
