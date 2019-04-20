@@ -161,13 +161,10 @@ public class UserServiceImpl implements UserService {
                 if (userPreviousWeek.getUserId().equals(userCurrentWeek.getUserId())) {
                     int currentPosition = userCurrentWeek.getPosition();
                     if (currentPosition < previousPosition) {
-                        logger.debug("RANKING - set >");
                         userCurrentWeek.setTrend(">");
                     } else if (currentPosition > previousPosition) {
-                        logger.debug("RANKING - set <");
                         userCurrentWeek.setTrend("<");
                     } else if (currentPosition == previousPosition) {
-                        logger.debug("RANKING - set =");
                         userCurrentWeek.setTrend("=");
                     }
                     break;
@@ -195,13 +192,17 @@ public class UserServiceImpl implements UserService {
                         "order by sum(u.previusSteps) desc", Departament.class)
                 .getResultList();
 
+        return calculateTrendRanking(currentRankingByDepartament, previousRankingByDepartament);
+    }
+
+    private List<Departament> calculateTrendRanking(List<Departament> currentRanking, List<Departament> previousRanking) {
         int currentPos = 0;
-        Iterator<Departament> itCurrentRanking = currentRankingByDepartament.iterator();
+        Iterator<Departament> itCurrentRanking = currentRanking.iterator();
         while (itCurrentRanking.hasNext()) {
             currentPos++;
             Departament depCurrentRanking = itCurrentRanking.next();
             depCurrentRanking.setPosition(currentPos);
-            Iterator<Departament> itPreviousRanking = previousRankingByDepartament.iterator();
+            Iterator<Departament> itPreviousRanking = previousRanking.iterator();
             int previousPos = 0;
             while(itPreviousRanking.hasNext()) {
                 previousPos++;
@@ -218,10 +219,8 @@ public class UserServiceImpl implements UserService {
                     break;
                 }
             }
-
         }
-
-        return currentRankingByDepartament;
+        return currentRanking;
     }
 
 }
